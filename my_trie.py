@@ -5,14 +5,19 @@
 class Node:
     def __init__(self):
         self.value = None
-        self.children = {}    # children is of type {char, Node}
+        self.children = {}  # children is of type {char, Node}
+
 
 class Trie:
     def __init__(self):
         self.root = Node()
 
-    def insert(self, key):      # key is of type string
-        # key should be a low-case string, this must be checked here!
+    def load(self, file):
+        with open(file, 'r', encoding='utf-8') as f:
+            for line in f.readlines():
+                self.insert(line.strip('\n'))
+
+    def insert(self, key):
         node = self.root
         for char in key:
             if char not in node.children:
@@ -27,18 +32,17 @@ class Trie:
         node = self.root
         for char in key:
             if char not in node.children:
-                pass
+                return node.value
             else:
                 node = node.children[char]
         return node.value
 
-    def display_node(self, node):
-        if (node.value != None):
-            print(node.value)
-        else:
-            for char in node.children:
-                self.display_node(node.children[char])
-        return
+    def search_all(self, key):
+        result = []
 
-    def display(self):
-        self.display_node(self.root)
+        for i in range(len(key)):
+            filter_word = self.search(key[i:])
+            if filter_word:
+                result.append(filter_word)
+
+        return list(set(result))

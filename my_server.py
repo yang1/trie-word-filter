@@ -4,21 +4,15 @@
 from flask import Flask, request
 import json
 from functools import lru_cache
-import time
-import pickle
+import my_trie
 
 app = Flask(__name__)
 
 
 @lru_cache()
 def get_trie():
-    s = time.time()
-
-    with open('my.tree', 'rb') as f:
-        trie = pickle.load(f)
-    e = time.time()
-
-    print(e - s)
+    trie = my_trie.Trie()
+    trie.load('words.txt')
     return trie
 
 
@@ -28,19 +22,10 @@ def word_filter():
 
     trie = get_trie()
 
-    # print(get_trie.cache_info())
-    print(get_trie.cache_clear())
-
-    result = []
-
-    for i in range(len(content)):
-        filter_word = trie.search(content[i:])
-        if filter_word:
-            result.append(filter_word)
-
-    return json.dumps(list(set(result)))
+    return json.dumps(trie.search_all(content))
 
 
 if __name__ == '__main__':
+    get_trie()
     app.debug = True
     app.run()
