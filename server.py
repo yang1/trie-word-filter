@@ -2,36 +2,34 @@
 # -*- coding:utf-8 -*-
 
 from flask import Flask, request
-
 import json
-
 import marisa_trie
-
 from functools import lru_cache
-
-import time
 
 app = Flask(__name__)
 
+
 @lru_cache()
 def get_trie():
-    trie = marisa_trie.Trie()
+    '''创建 Trie 树，添加敏感词至 Trie，并缓存'''
 
-    print('test')
+    words = []
 
-    trie.load('my_trie.marisa')
+    with open('words.txt', 'r', encoding='utf-8') as f:
+        for line in f.readlines():
+            words.append(line.strip('\n'))
+
+    trie = marisa_trie.Trie(words)
 
     return trie
 
 
-@app.route('/', methods=['GET'])
+@app.route('/filter', methods=['GET', 'POST'])
 def word_filter():
-    content = request.args.get('content', None)
+    '''提供 HTTP 过滤接口'''
+    content = request.values.get('content', None)
 
     trie = get_trie()
-
-    # print(get_trie.cache_info())
-    # print(get_trie.cache_clear())
 
     result = []
 
@@ -44,9 +42,8 @@ def word_filter():
 
 
 if __name__ == '__main__':
+    # 启动时生成一次trie，并缓存
+    get_trie()
+
     app.debug = True
     app.run()
-
-
-
-
