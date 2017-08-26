@@ -42,5 +42,3 @@ class Trie:
 
     def display(self):
         self.display_node(self.root)
-
-trie = Trie()

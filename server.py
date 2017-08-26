@@ -26,7 +26,6 @@ def get_trie():
 
 @app.route('/', methods=['GET'])
 def word_filter():
-    s = time.time()
     content = request.args.get('content', None)
 
     trie = get_trie()
